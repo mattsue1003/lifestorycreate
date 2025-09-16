@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退休人生藍圖 設計師</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        /* For printing */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-600">我的退休人生藍圖</h1>
+            <p class="mt-2 text-slate-600">運用「生命設計」原則，開啟精彩的第三人生！</p>
+        </header>
+
+        <!-- Step Indicator -->
+        <div class="flex items-center justify-center space-x-2 mb-8 no-print">
+            <div id="indicator-1" class="w-8 h-8 rounded-full flex items-center justify-center bg-blue-600 text-white font-bold ring-2 ring-blue-600 ring-offset-2">1</div>
+            <div class="flex-1 h-1 bg-slate-300"></div>
+            <div id="indicator-2" class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-300 text-slate-500 font-bold">2</div>
+            <div class="flex-1 h-1 bg-slate-300"></div>
+            <div id="indicator-3" class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-300 text-slate-500 font-bold">3</div>
+            <div class="flex-1 h-1 bg-slate-300"></div>
+            <div id="indicator-4" class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-300 text-slate-500 font-bold">4</div>
+            <div class="flex-1 h-1 bg-slate-300"></div>
+            <div id="indicator-5" class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-300 text-slate-500 font-bold">5</div>
+            <div class="flex-1 h-1 bg-slate-300"></div>
+            <div id="indicator-6" class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-300 text-slate-500 font-bold">6</div>
+            <div class="flex-1 h-1 bg-slate-300"></div>
+            <div id="indicator-7" class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-300 text-slate-500 font-bold">7</div>
+        </div>
+
+        <main id="app-container">
+            <!-- Step 1: Lifeview & Workview -->
+            <div id="step-1" class="step-content active">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-2 text-slate-700">第一步：我的人生觀與貢獻觀</h2>
+                    <p class="text-slate-600 mb-6">在開始規劃前，讓我們先沉澱下來，思考一些根本問題。這會成為你未來計畫的指南針。</p>
+                    
+                    <!-- Lifeview -->
+                    <div class="space-y-6 mb-8">
+                        <div>
+                            <h3 class="text-lg font-medium text-slate-700">我的人生觀</h3>
+                            <p class="text-sm text-slate-500 mb-2">人生所謂何來？人生的意義或目的為何？什麼是重要的？</p>
+                            <div id="lifeview-options" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4"></div>
+                            <textarea id="lifeview" rows="4" placeholder="也可在此寫下你的其他看法..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Workview -->
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-medium text-slate-700">我的貢獻觀</h3>
+                            <p class="text-sm text-slate-500 mb-2">退休後，「工作」可以轉化為「貢獻」。你為何而做？它為你帶來什麼？</p>
+                             <div id="workview-options" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4"></div>
+                            <textarea id="workview" rows="4" placeholder="也可在此寫下你的其他看法..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-right">
+                        <button onclick="goToStep(2)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Dashboard Assessment -->
+            <div id="step-2" class="step-content">
+                 <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-2 text-slate-700">第二步：檢視我的人生儀表板</h2>
+                    <p class="text-slate-600 mb-6">退休生活也需要平衡。請評估您目前在以下四個關鍵領域的滿意度。(0分代表極不滿意，100分代表非常圓滿)</p>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="health" class="flex justify-between items-center text-lg font-medium text-slate-700"><span>💪 健康 (身心活力)</span><span id="health-value" class="font-bold text-blue-600">50</span></label>
+                            <p class="text-sm text-slate-500 mt-1">身體的活動力與心靈的平靜是享受退休生活的基礎。</p>
+                            <input type="range" id="health" min="0" max="100" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mt-2">
+                            <textarea id="health-reason" rows="2" placeholder="我給這個分數的原因是..." class="w-full p-2 border border-slate-300 rounded-md mt-2 focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label for="play" class="flex justify-between items-center text-lg font-medium text-slate-700"><span>🎈 玩樂 (興趣與喜悅)</span><span id="play-value" class="font-bold text-blue-600">50</span></label>
+                            <p class="text-sm text-slate-500 mt-1">純粹為了好玩而做的事，能為生活帶來源源不絕的喜悅與活力。</p>
+                            <input type="range" id="play" min="0" max="100" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mt-2">
+                            <textarea id="play-reason" rows="2" placeholder="我給這個分數的原因是..." class="w-full p-2 border border-slate-300 rounded-md mt-2 focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label for="love" class="flex justify-between items-center text-lg font-medium text-slate-700"><span>❤️ 關愛 (家人與朋友)</span><span id="love-value" class="font-bold text-blue-600">50</span></label>
+                            <p class="text-sm text-slate-500 mt-1">與家人、朋友、社群的連結，是我們情感支持的重要來源。</p>
+                            <input type="range" id="love" min="0" max="100" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mt-2">
+                            <textarea id="love-reason" rows="2" placeholder="我給這個分數的原因是..." class="w-full p-2 border border-slate-300 rounded-md mt-2 focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label for="contribution" class="flex justify-between items-center text-lg font-medium text-slate-700"><span>🌱 貢獻 (學習與服務)</span><span id="contribution-value" class="font-bold text-blue-600">50</span></label>
+                            <p class="text-sm text-slate-500 mt-1">透過學習、服務或傳承，能讓我們感受到自我價值與生命的意義。</p>
+                            <input type="range" id="contribution" min="0" max="100" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mt-2">
+                            <textarea id="contribution-reason" rows="2" placeholder="我給這個分數的原因是..." class="w-full p-2 border border-slate-300 rounded-md mt-2 focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex justify-between">
+                        <button onclick="goToStep(1)" class="bg-slate-200 text-slate-700 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition-colors">上一步</button>
+                        <button onclick="goToStep(3)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Good Time Journal -->
+            <div id="step-3" class="step-content">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-2 text-slate-700">第三步：我的好時光日誌</h2>
+                    <p class="text-slate-600 mb-6">記錄下近期讓你感到「充滿活力」或「特別投入」的活動，也記錄下讓你「感到疲憊」的活動。這將幫助我們找出能帶給你能量的事物。</p>
+                    <div id="journal-entries" class="space-y-4">
+                        <!-- Journal Entry Template (will be cloned) -->
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="addJournalEntry()" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">新增一筆紀錄</button>
+                    </div>
+                     <div class="mt-8 flex justify-between">
+                        <button onclick="goToStep(2)" class="bg-slate-200 text-slate-700 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition-colors">上一步</button>
+                        <button onclick="goToStep(4)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Odyssey Plans -->
+            <div id="step-4" class="step-content">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-2 text-slate-700">第四步：發想我的人生藍圖</h2>
+                    <p class="text-slate-600 mb-6">根據前面的探索，構想未來5年的三種人生劇本。請參考你的「好時光日誌」，將帶來活力的活動融入計畫！</p>
+                    <div class="space-y-8">
+                         <div><h3 class="text-xl font-semibold text-blue-700 mb-2">藍圖一：我的首選計畫</h3><p class="text-slate-500 mb-4">這是我目前最想做的事，或是現有計畫的延伸。例如：環遊世界、含飴弄孫、學習園藝...</p><input type="text" id="plan1-title" placeholder="為這個藍圖取個名字，例如：逍遙遊俠" class="w-full p-2 border border-slate-300 rounded-md mb-2 focus:ring-2 focus:ring-blue-500"><textarea id="plan1-desc" rows="4" placeholder="簡單描述這個計畫的內容與想像中的生活樣貌..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></textarea></div>
+                         <div><h3 class="text-xl font-semibold text-emerald-700 mb-2">藍圖二：如果首選行不通...</h3><p class="text-slate-500 mb-4">如果計畫一突然無法執行了（例如：健康因素、家庭責任），我的備案是什麼？例如：改為深度國內旅遊、投入社區大學...</p><input type="text" id="plan2-title" placeholder="為這個藍圖取個名字，例如：在地生活家" class="w-full p-2 border border-slate-300 rounded-md mb-2 focus:ring-2 focus:ring-emerald-500"><textarea id="plan2-desc" rows="4" placeholder="描述這個備案的內容..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-emerald-500"></textarea></div>
+                         <div><h3 class="text-xl font-semibold text-purple-700 mb-2">藍圖三：我的狂想計畫</h3><p class="text-slate-500 mb-4">如果不用擔心金錢和別人的眼光，我最想做什麼瘋狂的事？例如：到山上開一間咖啡廳、學習飛行傘、寫一本小說...</p><input type="text" id="plan3-title" placeholder="為這個藍圖取個名字，例如：夢想實踐家" class="w-full p-2 border border-slate-300 rounded-md mb-2 focus:ring-2 focus:ring-purple-500"><textarea id="plan3-desc" rows="4" placeholder="描述這個最大膽的夢想..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-purple-500"></textarea></div>
+                    </div>
+                    <div class="mt-8 flex justify-between">
+                        <button onclick="goToStep(3)" class="bg-slate-200 text-slate-700 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition-colors">上一步</button>
+                        <button onclick="goToStep(5)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Prototyping -->
+            <div id="step-5" class="step-content">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-2 text-slate-700">第五步：規劃我的原型體驗</h2>
+                    <p class="text-slate-600 mb-6">「原型」就是一個小小的體驗，用來測試我的藍圖是否真的喜歡。與其直接投入，不如先小規模嘗試。</p>
+                    <div class="space-y-4">
+                        <div><label for="prototype1" class="font-semibold text-slate-700">根據我的「藍圖一」，我可以做什麼小嘗試？</label><p class="text-sm text-slate-500 mb-1">例如：想開咖啡廳，可以先到朋友的店幫忙一個下午。</p><input type="text" id="prototype1" placeholder="寫下一個可以立即行動的小計畫..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></div>
+                        <div><label for="prototype2" class="font-semibold text-slate-700">根據我的「藍圖二」，我可以做什麼小嘗試？</label><p class="text-sm text-slate-500 mb-1">例如：想投入社區大學，可以先報名一堂短期體驗課。</p><input type="text" id="prototype2" placeholder="寫下一個可以立即行動的小計畫..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></div>
+                        <div><label for="prototype3" class="font-semibold text-slate-700">根據我的「藍圖三」，我可以做什麼小嘗試？</label><p class="text-sm text-slate-500 mb-1">例如：想寫小說，可以先參加一個線上寫作讀書會。</p><input type="text" id="prototype3" placeholder="寫下一個可以立即行動的小計畫..." class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></div>
+                    </div>
+                    <div class="mt-8 flex justify-between">
+                        <button onclick="goToStep(4)" class="bg-slate-200 text-slate-700 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition-colors">上一步</button>
+                        <button onclick="goToStep(6)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Build Your Team -->
+            <div id="step-6" class="step-content">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-2 text-slate-700">第六步：建立我的支持團隊</h2>
+                    <p class="text-slate-600 mb-6">生命設計不是單打獨鬥。想一想，在你的退休旅程中，有哪些人可以成為你的夥伴、導師或支持者？</p>
+                    <div class="space-y-4">
+                        <div><label class="font-semibold text-slate-700">團隊成員 1</label><div class="flex flex-col sm:flex-row gap-2 mt-1"><input type="text" id="team-member1-name" placeholder="姓名 / 稱謂" class="w-full sm:w-1/3 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"><input type="text" id="team-member1-role" placeholder="他/她可以如何幫助我？(例：一起運動的夥伴)" class="w-full sm:w-2/3 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></div></div>
+                        <div><label class="font-semibold text-slate-700">團隊成員 2</label><div class="flex flex-col sm:flex-row gap-2 mt-1"><input type="text" id="team-member2-name" placeholder="姓名 / 稱謂" class="w-full sm:w-1/3 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"><input type="text" id="team-member2-role" placeholder="他/她可以如何幫助我？(例：理財顧問)" class="w-full sm:w-2/3 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></div></div>
+                        <div><label class="font-semibold text-slate-700">團隊成員 3</label><div class="flex flex-col sm:flex-row gap-2 mt-1"><input type="text" id="team-member3-name" placeholder="姓名 / 稱謂" class="w-full sm:w-1/3 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"><input type="text" id="team-member3-role" placeholder="他/她可以如何幫助我？(例：分享園藝心得的鄰居)" class="w-full sm:w-2/3 p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500"></div></div>
+                    </div>
+                    <div class="mt-8 flex justify-between">
+                        <button onclick="goToStep(5)" class="bg-slate-200 text-slate-700 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition-colors">上一步</button>
+                        <button onclick="goToStep(7)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">完成我的藍圖</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 7: Summary -->
+            <div id="step-7" class="step-content">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg print-area">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-slate-700">我的退休人生藍圖總覽</h2>
+                    
+                    <!-- Views Summary --><div class="mb-8"><h3 class="text-xl font-semibold border-b-2 border-blue-200 pb-2 mb-4">我的信念指南針</h3><div class="p-4 bg-slate-50 rounded-lg"><h4 class="font-bold text-slate-800">人生觀</h4><div id="summary-lifeview-options" class="flex flex-wrap gap-2 my-2"></div><p id="summary-lifeview" class="text-slate-700 whitespace-pre-wrap mt-1">尚未填寫</p></div><div class="p-4 bg-slate-50 rounded-lg mt-4"><h4 class="font-bold text-slate-800">貢獻觀</h4><div id="summary-workview-options" class="flex flex-wrap gap-2 my-2"></div><p id="summary-workview" class="text-slate-700 whitespace-pre-wrap mt-1">尚未填寫</p></div></div>
+                    <!-- Dashboard Summary --><div class="mb-8"><h3 class="text-xl font-semibold border-b-2 border-blue-200 pb-2 mb-4">人生儀表板現況</h3><div id="summary-dashboard" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></div>
+                    <!-- Journal Summary --><div class="mb-8"><h3 class="text-xl font-semibold border-b-2 border-blue-200 pb-2 mb-4">好時光日誌洞察</h3><div id="summary-journal"></div></div>
+                    <!-- Odyssey Plans Summary --><div class="mb-8"><h3 class="text-xl font-semibold border-b-2 border-blue-200 pb-2 mb-4">我的三種人生藍圖</h3><div id="summary-plans" class="space-y-6"></div></div>
+                    <!-- Prototypes Summary --><div class="mb-8"><h3 class="text-xl font-semibold border-b-2 border-blue-200 pb-2 mb-4">我的原型體驗計畫</h3><div id="summary-prototypes"></div></div>
+                    <!-- Team Summary --><div><h3 class="text-xl font-semibold border-b-2 border-blue-200 pb-2 mb-4">我的支持團隊</h3><div id="summary-team"></div></div>
+                </div>
+                <div class="mt-8 flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 no-print">
+                    <button onclick="goToStep(6)" class="w-full sm:w-auto bg-slate-200 text-slate-700 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition-colors">返回修改</button>
+                    <button onclick="window.print()" class="w-full sm:w-auto bg-emerald-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-emerald-700 transition-colors">儲存為 PDF</button>
+                    <button onclick="downloadAsImage()" class="w-full sm:w-auto bg-sky-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-700 transition-colors">下載為圖片</button>
+                    <button onclick="resetApp()" class="w-full sm:w-auto bg-red-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-600 transition-colors mt-4 sm:mt-0">重新開始</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const lifeviewOptions = ['活在當下', '持續學習', '家庭第一', '財務自由', '身心健康', '服務他人', '探索世界', '追求平靜', '創造價值', '享受藝術', '感恩惜福', '真誠待人', '勇於挑戰', '維繫友誼', '親近自然', '簡單生活', '公平正義', '保持樂觀', '心靈成長', '發揮影響力'];
+        const workviewOptions = ['傳承經驗與智慧', '志工服務', '陪伴家人', '全心投入興趣', '學習新知', '關懷社區', '創造美好事物', '擔任顧問/導師', '幫助弱勢', '推廣理念', '賺取額外收入', '建立社群連結', '維持規律生活', '發揮專業能力', '保護環境', '藝術創作', '探索新可能性', '保持社會參與', '促進健康生活', '享受過程的樂趣'];
+        
+        const lifePlan = {
+            lifeview: '',
+            lifeview_options: [],
+            workview: '',
+            workview_options: [],
+            dashboard: { 
+                health: 50, health_reason: '', 
+                play: 50, play_reason: '', 
+                love: 50, love_reason: '', 
+                contribution: 50, contribution_reason: '' 
+            },
+            goodTimeJournal: [],
+            odysseyPlans: [{ title: '', description: '' }, { title: '', description: '' }, { title: '', description: '' }],
+            prototypes: ['', '', ''],
+            team: [{ name: '', role: '' }, { name: '', role: '' }, { name: '', role: '' }]
+        };
+
+        function createCheckboxOptions(containerId, options, groupName) {
+            const container = document.getElementById(containerId);
+            options.forEach(option => {
+                const label = document.createElement('label');
+                label.className = 'flex items-center space-x-2 p-2 bg-slate-100 rounded-md cursor-pointer hover:bg-slate-200';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = groupName;
+                checkbox.value = option;
+                checkbox.className = 'h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500';
+                const span = document.createElement('span');
+                span.textContent = option;
+                span.className = 'text-sm text-slate-700';
+                label.appendChild(checkbox);
+                label.appendChild(span);
+                container.appendChild(label);
+            });
+        }
+
+        function addJournalEntry(entry = { activity: '', feeling: 'energized', reflection: '' }) {
+            const container = document.getElementById('journal-entries');
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'journal-entry p-4 border border-slate-200 rounded-lg';
+            entryDiv.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">活動</label>
+                        <input type="text" value="${entry.activity}" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="我在做什麼？">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">感受 / 精力</label>
+                        <select class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="energized" ${entry.feeling === 'energized' ? 'selected' : ''}>💪 充滿活力</option>
+                            <option value="flow" ${entry.feeling === 'flow' ? 'selected' : ''}>🧘 平靜專注</option>
+                            <option value="drained" ${entry.feeling === 'drained' ? 'selected' : ''}>😩 感到疲憊</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-slate-700">觀察與反思</label>
+                    <textarea rows="2" class="mt-1 block w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="當下的情境？我學到了什麼？">${entry.reflection}</textarea>
+                </div>
+            `;
+            container.appendChild(entryDiv);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createCheckboxOptions('lifeview-options', lifeviewOptions, 'lifeview');
+            createCheckboxOptions('workview-options', workviewOptions, 'workview');
+            
+            const sliders = ['health', 'play', 'love', 'contribution'];
+            sliders.forEach(id => {
+                const slider = document.getElementById(id);
+                const valueDisplay = document.getElementById(`${id}-value`);
+                slider.addEventListener('input', () => {
+                    valueDisplay.textContent = slider.value;
+                    lifePlan.dashboard[id] = parseInt(slider.value, 10);
+                });
+            });
+            // Add one initial journal entry
+            addJournalEntry();
+        });
+
+        function updateStepIndicator(step) {
+            for (let i = 1; i <= 7; i++) {
+                const indicator = document.getElementById(`indicator-${i}`);
+                if (i <= step) {
+                    indicator.classList.add('bg-blue-600', 'text-white', 'ring-2', 'ring-blue-600', 'ring-offset-2');
+                    indicator.classList.remove('bg-slate-300', 'text-slate-500');
+                } else {
+                    indicator.classList.add('bg-slate-300', 'text-slate-500');
+                    indicator.classList.remove('bg-blue-600', 'text-white', 'ring-2', 'ring-blue-600', 'ring-offset-2');
+                }
+            }
+        }
+        
+        function saveStepData(step) {
+            if (step === 1) {
+                lifePlan.lifeview = document.getElementById('lifeview').value;
+                lifePlan.workview = document.getElementById('workview').value;
+                lifePlan.lifeview_options = Array.from(document.querySelectorAll('#lifeview-options input:checked')).map(el => el.value);
+                lifePlan.workview_options = Array.from(document.querySelectorAll('#workview-options input:checked')).map(el => el.value);
+            } else if (step === 2) {
+                lifePlan.dashboard.health_reason = document.getElementById('health-reason').value;
+                lifePlan.dashboard.play_reason = document.getElementById('play-reason').value;
+                lifePlan.dashboard.love_reason = document.getElementById('love-reason').value;
+                lifePlan.dashboard.contribution_reason = document.getElementById('contribution-reason').value;
+            } else if (step === 3) {
+                lifePlan.goodTimeJournal = [];
+                const entries = document.querySelectorAll('.journal-entry');
+                entries.forEach(entry => {
+                    lifePlan.goodTimeJournal.push({
+                        activity: entry.querySelector('input[type="text"]').value,
+                        feeling: entry.querySelector('select').value,
+                        reflection: entry.querySelector('textarea').value
+                    });
+                });
+            } else if (step === 4) {
+                lifePlan.odysseyPlans[0] = { title: document.getElementById('plan1-title').value, description: document.getElementById('plan1-desc').value };
+                lifePlan.odysseyPlans[1] = { title: document.getElementById('plan2-title').value, description: document.getElementById('plan2-desc').value };
+                lifePlan.odysseyPlans[2] = { title: document.getElementById('plan3-title').value, description: document.getElementById('plan3-desc').value };
+            } else if (step === 5) {
+                lifePlan.prototypes = [document.getElementById('prototype1').value, document.getElementById('prototype2').value, document.getElementById('prototype3').value];
+            } else if (step === 6) {
+                lifePlan.team[0] = { name: document.getElementById('team-member1-name').value, role: document.getElementById('team-member1-role').value };
+                lifePlan.team[1] = { name: document.getElementById('team-member2-name').value, role: document.getElementById('team-member2-role').value };
+                lifePlan.team[2] = { name: document.getElementById('team-member3-name').value, role: document.getElementById('team-member3-role').value };
+            }
+        }
+
+        function generateSummary() {
+            // Views
+            document.getElementById('summary-lifeview').textContent = lifePlan.lifeview || (lifePlan.lifeview_options.length === 0 ? '尚未填寫' : '');
+            document.getElementById('summary-workview').textContent = lifePlan.workview || (lifePlan.workview_options.length === 0 ? '尚未填寫' : '');
+            document.getElementById('summary-lifeview-options').innerHTML = lifePlan.lifeview_options.map(o => `<span class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">${o}</span>`).join('');
+            document.getElementById('summary-workview-options').innerHTML = lifePlan.workview_options.map(o => `<span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">${o}</span>`).join('');
+
+            // Dashboard
+            const dashboardContainer = document.getElementById('summary-dashboard');
+            const createDashboardSummaryItem = (label, value, reason) => {
+                const reasonHtml = reason ? `<p class="text-sm text-slate-600 mt-2 whitespace-pre-wrap">${reason}</p>` : '';
+                return `
+                    <div class="p-4 bg-slate-100 rounded-lg">
+                        <div class="flex justify-between items-baseline">
+                           <p class="text-lg font-semibold">${label}</p>
+                           <p class="text-2xl font-bold text-blue-600">${value}</p>
+                        </div>
+                        ${reasonHtml}
+                    </div>
+                `;
+            };
+            dashboardContainer.innerHTML = `
+                ${createDashboardSummaryItem('💪 健康', lifePlan.dashboard.health, lifePlan.dashboard.health_reason)}
+                ${createDashboardSummaryItem('🎈 玩樂', lifePlan.dashboard.play, lifePlan.dashboard.play_reason)}
+                ${createDashboardSummaryItem('❤️ 關愛', lifePlan.dashboard.love, lifePlan.dashboard.love_reason)}
+                ${createDashboardSummaryItem('🌱 貢獻', lifePlan.dashboard.contribution, lifePlan.dashboard.contribution_reason)}
+            `;
+
+            // Journal
+            const journalContainer = document.getElementById('summary-journal');
+            const feelingMap = { energized: '💪 充滿活力', flow: '🧘 平靜專注', drained: '😩 感到疲憊' };
+            if(lifePlan.goodTimeJournal.length > 0 && lifePlan.goodTimeJournal.some(e => e.activity)) {
+                journalContainer.innerHTML = lifePlan.goodTimeJournal.filter(e => e.activity).map(entry => `
+                    <div class="p-3 bg-slate-50 rounded-lg mb-2">
+                        <p class="font-semibold text-slate-800">${entry.activity} <span class="text-sm font-normal text-slate-500 ml-2">${feelingMap[entry.feeling]}</span></p>
+                        <p class="text-sm text-slate-600 pl-1">${entry.reflection}</p>
+                    </div>`).join('');
+            } else {
+                journalContainer.innerHTML = `<p class="text-slate-500">尚未記錄好時光日誌。</p>`;
+            }
+            
+            // Plans
+            const plansContainer = document.getElementById('summary-plans');
+            plansContainer.innerHTML = `<div class="p-4 border-l-4 border-blue-500 bg-blue-50 rounded-r-lg"><h4 class="font-bold text-blue-800">藍圖一：${lifePlan.odysseyPlans[0].title || '未命名'}</h4><p class="text-slate-700 whitespace-pre-wrap">${lifePlan.odysseyPlans[0].description || '尚未填寫'}</p></div><div class="p-4 border-l-4 border-emerald-500 bg-emerald-50 rounded-r-lg"><h4 class="font-bold text-emerald-800">藍圖二：${lifePlan.odysseyPlans[1].title || '未命名'}</h4><p class="text-slate-700 whitespace-pre-wrap">${lifePlan.odysseyPlans[1].description || '尚未填寫'}</p></div><div class="p-4 border-l-4 border-purple-500 bg-purple-50 rounded-r-lg"><h4 class="font-bold text-purple-800">藍圖三：${lifePlan.odysseyPlans[2].title || '未命名'}</h4><p class="text-slate-700 whitespace-pre-wrap">${lifePlan.odysseyPlans[2].description || '尚未填寫'}</p></div>`;
+
+            // Prototypes
+            const prototypesContainer = document.getElementById('summary-prototypes');
+            prototypesContainer.innerHTML = `<ul class="list-disc list-inside space-y-2 text-slate-700"><li><b>針對藍圖一：</b>${lifePlan.prototypes[0] || '尚未規劃'}</li><li><b>針對藍圖二：</b>${lifePlan.prototypes[1] || '尚未規劃'}</li><li><b>針對藍圖三：</b>${lifePlan.prototypes[2] || '尚未規劃'}</li></ul>`;
+
+            // Team
+            const teamContainer = document.getElementById('summary-team');
+            let teamHTML = '<ul class="list-disc list-inside space-y-2 text-slate-700">';
+            let teamHasMembers = lifePlan.team.some(member => member.name || member.role);
+            if(teamHasMembers) {
+                lifePlan.team.forEach(member => { if (member.name || member.role) { teamHTML += `<li><b>${member.name || '未命名'}：</b>${member.role || '未指定角色'}</li>`; } });
+            } else { teamHTML += '<li>尚未建立團隊</li>'; }
+            teamHTML += '</ul>';
+            teamContainer.innerHTML = teamHTML;
+        }
+
+        function goToStep(stepNumber) {
+            const currentStep = document.querySelector('.step-content.active').id.split('-')[1];
+            saveStepData(parseInt(currentStep));
+            document.querySelectorAll('.step-content').forEach(step => step.classList.remove('active'));
+            document.getElementById(`step-${stepNumber}`).classList.add('active');
+            updateStepIndicator(stepNumber);
+            if (stepNumber === 7) { generateSummary(); }
+            window.scrollTo(0, 0);
+        }
+
+        function downloadAsImage() {
+            const summaryElement = document.querySelector('.print-area');
+            const spinner = document.createElement('div');
+            spinner.innerHTML = `<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: rgba(255,255,255,0.8); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2);">正在產生圖片...</div>`;
+            document.body.appendChild(spinner);
+
+            html2canvas(summaryElement, {
+                scale: 2, // 提高圖片解析度
+                useCORS: true,
+                backgroundColor: '#ffffff' // 確保背景是白色
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = '我的退休人生藍圖.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                document.body.removeChild(spinner);
+            }).catch(err => {
+                console.error('圖片產生失敗:', err);
+                document.body.removeChild(spinner);
+                alert('圖片產生失敗，請稍後再試。');
+            });
+        }
+
+        function resetApp() {
+            if (confirm('您確定要清除所有已填寫的資料並重新開始嗎？')) {
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
+
