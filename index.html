@@ -30,10 +30,26 @@
                 left: 0;
                 top: 0;
                 width: 100%;
+                -webkit-print-color-adjust: exact; /* Chrome, Safari */
+                color-adjust: exact; /* Firefox */
             }
             .no-print {
                 display: none;
             }
+        }
+        /* Custom modal for reset confirmation */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
@@ -140,7 +156,7 @@
                     <h2 class="text-2xl font-bold mb-2 text-slate-700">第三步：我的好時光日誌</h2>
                     <p class="text-slate-600 mb-6">記錄下近期讓你感到「充滿活力」或「特別投入」的活動，也記錄下讓你「感到疲憊」的活動。這將幫助我們找出能帶給你能量的事物。</p>
                     <div id="journal-entries" class="space-y-4">
-                        <!-- Journal Entry Template (will be cloned) -->
+                        <!-- Journal entries will be added here by JS -->
                     </div>
                     <div class="mt-6">
                         <button onclick="addJournalEntry()" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">新增一筆紀錄</button>
@@ -205,7 +221,7 @@
             
             <!-- Step 7: Summary -->
             <div id="step-7" class="step-content">
-                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg print-area">
+                <div id="summary-print-area" class="bg-white p-6 md:p-8 rounded-xl shadow-lg print-area">
                     <h2 class="text-2xl font-bold mb-6 text-center text-slate-700">我的退休人生藍圖總覽</h2>
                     
                     <!-- Views Summary --><div class="mb-8"><h3 class="text-xl font-semibold border-b-2 border-blue-200 pb-2 mb-4">我的信念指南針</h3><div class="p-4 bg-slate-50 rounded-lg"><h4 class="font-bold text-slate-800">人生觀</h4><div id="summary-lifeview-options" class="flex flex-wrap gap-2 my-2"></div><p id="summary-lifeview" class="text-slate-700 whitespace-pre-wrap mt-1">尚未填寫</p></div><div class="p-4 bg-slate-50 rounded-lg mt-4"><h4 class="font-bold text-slate-800">貢獻觀</h4><div id="summary-workview-options" class="flex flex-wrap gap-2 my-2"></div><p id="summary-workview" class="text-slate-700 whitespace-pre-wrap mt-1">尚未填寫</p></div></div>
@@ -219,35 +235,43 @@
                     <button onclick="goToStep(6)" class="w-full sm:w-auto bg-slate-200 text-slate-700 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition-colors">返回修改</button>
                     <button onclick="window.print()" class="w-full sm:w-auto bg-emerald-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-emerald-700 transition-colors">儲存為 PDF</button>
                     <button onclick="downloadAsImage()" class="w-full sm:w-auto bg-sky-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-700 transition-colors">下載為圖片</button>
-                    <button onclick="resetApp()" class="w-full sm:w-auto bg-red-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-600 transition-colors mt-4 sm:mt-0">重新開始</button>
+                    <button onclick="showResetModal()" class="w-full sm:w-auto bg-red-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-600 transition-colors mt-4 sm:mt-0">重新開始</button>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Reset Confirmation Modal -->
+    <div id="reset-modal" class="modal-overlay">
+        <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-sm w-full">
+            <h3 class="text-lg font-bold text-slate-800">確認清除資料</h3>
+            <p class="text-slate-600 mt-2">您確定要清除所有已填寫的資料並重新開始嗎？這個操作無法復原。</p>
+            <div class="mt-6 flex justify-end space-x-4">
+                <button onclick="hideResetModal()" class="px-4 py-2 bg-slate-200 text-slate-800 rounded-md hover:bg-slate-300">取消</button>
+                <button onclick="confirmReset()" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">確定清除</button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        const lifeviewOptions = ['活在當下', '持續學習', '家庭第一', '財務自由', '身心健康', '服務他人', '探索世界', '追求平靜', '創造價值', '享受藝術', '感恩惜福', '真誠待人', '勇於挑戰', '維繫友誼', '親近自然', '簡單生活', '公平正義', '保持樂觀', '心靈成長', '發揮影響力'];
-        const workviewOptions = ['傳承經驗與智慧', '志工服務', '陪伴家人', '全心投入興趣', '學習新知', '關懷社區', '創造美好事物', '擔任顧問/導師', '幫助弱勢', '推廣理念', '賺取額外收入', '建立社群連結', '維持規律生活', '發揮專業能力', '保護環境', '藝術創作', '探索新可能性', '保持社會參與', '促進健康生活', '享受過程的樂趣'];
-        
-        const lifePlan = {
-            lifeview: '',
-            lifeview_options: [],
-            workview: '',
-            workview_options: [],
-            dashboard: { 
-                health: 50, health_reason: '', 
-                play: 50, play_reason: '', 
-                love: 50, love_reason: '', 
-                contribution: 50, contribution_reason: '' 
-            },
+        const defaultLifePlan = {
+            lifeview: '', lifeview_options: [],
+            workview: '', workview_options: [],
+            dashboard: { health: 50, health_reason: '', play: 50, play_reason: '', love: 50, love_reason: '', contribution: 50, contribution_reason: '' },
             goodTimeJournal: [],
             odysseyPlans: [{ title: '', description: '' }, { title: '', description: '' }, { title: '', description: '' }],
             prototypes: ['', '', ''],
             team: [{ name: '', role: '' }, { name: '', role: '' }, { name: '', role: '' }]
         };
+        let lifePlan = JSON.parse(JSON.stringify(defaultLifePlan)); // Deep copy
+
+        const lifeviewOptions = ['活在當下', '持續學習', '家庭第一', '財務自由', '身心健康', '服務他人', '探索世界', '追求平靜', '創造價值', '享受藝術', '感恩惜福', '真誠待人', '勇於挑戰', '維繫友誼', '親近自然', '簡單生活', '公平正義', '保持樂觀', '心靈成長', '發揮影響力'];
+        const workviewOptions = ['傳承經驗與智慧', '志工服務', '陪伴家人', '全心投入興趣', '學習新知', '關懷社區', '創造美好事物', '擔任顧問/導師', '幫助弱勢', '推廣理念', '賺取額外收入', '建立社群連結', '維持規律生活', '發揮專業能力', '保護環境', '藝術創作', '探索新可能性', '保持社會參與', '促進健康生活', '享受過程的樂趣'];
 
         function createCheckboxOptions(containerId, options, groupName) {
             const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Clear existing options before creating new ones
             options.forEach(option => {
                 const label = document.createElement('label');
                 label.className = 'flex items-center space-x-2 p-2 bg-slate-100 rounded-md cursor-pointer hover:bg-slate-200';
@@ -293,8 +317,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            createCheckboxOptions('lifeview-options', lifeviewOptions, 'lifeview');
-            createCheckboxOptions('workview-options', workviewOptions, 'workview');
+            loadDataFromLocalStorage();
+            populateFormFromData();
             
             const sliders = ['health', 'play', 'love', 'contribution'];
             sliders.forEach(id => {
@@ -305,9 +329,60 @@
                     lifePlan.dashboard[id] = parseInt(slider.value, 10);
                 });
             });
-            // Add one initial journal entry
-            addJournalEntry();
         });
+
+        function populateFormFromData() {
+            // Step 1
+            createCheckboxOptions('lifeview-options', lifeviewOptions, 'lifeview');
+            createCheckboxOptions('workview-options', workviewOptions, 'workview');
+            document.getElementById('lifeview').value = lifePlan.lifeview;
+            document.getElementById('workview').value = lifePlan.workview;
+            lifePlan.lifeview_options.forEach(val => {
+                const cb = document.querySelector(`#lifeview-options input[value="${val}"]`);
+                if (cb) cb.checked = true;
+            });
+             lifePlan.workview_options.forEach(val => {
+                const cb = document.querySelector(`#workview-options input[value="${val}"]`);
+                if (cb) cb.checked = true;
+            });
+
+            // Step 2
+            ['health', 'play', 'love', 'contribution'].forEach(id => {
+                const slider = document.getElementById(id);
+                slider.value = lifePlan.dashboard[id];
+                document.getElementById(`${id}-value`).textContent = lifePlan.dashboard[id];
+                document.getElementById(`${id}-reason`).value = lifePlan.dashboard[`${id}_reason`];
+            });
+
+            // Step 3
+            document.getElementById('journal-entries').innerHTML = '';
+            if (lifePlan.goodTimeJournal.length > 0) {
+                lifePlan.goodTimeJournal.forEach(entry => addJournalEntry(entry));
+            } else {
+                addJournalEntry(); // Add one empty if none saved
+            }
+
+            // Step 4
+            document.getElementById('plan1-title').value = lifePlan.odysseyPlans[0].title;
+            document.getElementById('plan1-desc').value = lifePlan.odysseyPlans[0].description;
+            document.getElementById('plan2-title').value = lifePlan.odysseyPlans[1].title;
+            document.getElementById('plan2-desc').value = lifePlan.odysseyPlans[1].description;
+            document.getElementById('plan3-title').value = lifePlan.odysseyPlans[2].title;
+            document.getElementById('plan3-desc').value = lifePlan.odysseyPlans[2].description;
+
+            // Step 5
+            document.getElementById('prototype1').value = lifePlan.prototypes[0];
+            document.getElementById('prototype2').value = lifePlan.prototypes[1];
+            document.getElementById('prototype3').value = lifePlan.prototypes[2];
+
+            // Step 6
+            document.getElementById('team-member1-name').value = lifePlan.team[0].name;
+            document.getElementById('team-member1-role').value = lifePlan.team[0].role;
+            document.getElementById('team-member2-name').value = lifePlan.team[1].name;
+            document.getElementById('team-member2-role').value = lifePlan.team[1].role;
+            document.getElementById('team-member3-name').value = lifePlan.team[2].name;
+            document.getElementById('team-member3-role').value = lifePlan.team[2].role;
+        }
 
         function updateStepIndicator(step) {
             for (let i = 1; i <= 7; i++) {
@@ -353,6 +428,16 @@
                 lifePlan.team[0] = { name: document.getElementById('team-member1-name').value, role: document.getElementById('team-member1-role').value };
                 lifePlan.team[1] = { name: document.getElementById('team-member2-name').value, role: document.getElementById('team-member2-role').value };
                 lifePlan.team[2] = { name: document.getElementById('team-member3-name').value, role: document.getElementById('team-member3-role').value };
+            }
+            localStorage.setItem('retirementLifePlan', JSON.stringify(lifePlan));
+        }
+        
+        function loadDataFromLocalStorage() {
+            const savedData = localStorage.getItem('retirementLifePlan');
+            if (savedData) {
+                lifePlan = JSON.parse(savedData);
+            } else {
+                lifePlan = JSON.parse(JSON.stringify(defaultLifePlan)); // Reset to default if no data
             }
         }
 
@@ -427,15 +512,15 @@
         }
 
         function downloadAsImage() {
-            const summaryElement = document.querySelector('.print-area');
+            const summaryElement = document.getElementById('summary-print-area');
             const spinner = document.createElement('div');
             spinner.innerHTML = `<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: rgba(255,255,255,0.8); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2);">正在產生圖片...</div>`;
             document.body.appendChild(spinner);
 
             html2canvas(summaryElement, {
-                scale: 2, // 提高圖片解析度
+                scale: 2,
                 useCORS: true,
-                backgroundColor: '#ffffff' // 確保背景是白色
+                backgroundColor: '#ffffff'
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = '我的退休人生藍圖.png';
@@ -445,14 +530,24 @@
             }).catch(err => {
                 console.error('圖片產生失敗:', err);
                 document.body.removeChild(spinner);
-                alert('圖片產生失敗，請稍後再試。');
+                const errorModal = document.createElement('div');
+                errorModal.innerHTML = `<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: #fee2e2; color: #991b1b; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2);">圖片產生失敗，請稍後再試。</div>`;
+                document.body.appendChild(errorModal);
+                setTimeout(() => document.body.removeChild(errorModal), 3000);
             });
         }
 
-        function resetApp() {
-            if (confirm('您確定要清除所有已填寫的資料並重新開始嗎？')) {
-                window.location.reload();
-            }
+        function showResetModal() {
+            document.getElementById('reset-modal').style.display = 'flex';
+        }
+
+        function hideResetModal() {
+            document.getElementById('reset-modal').style.display = 'none';
+        }
+
+        function confirmReset() {
+            localStorage.removeItem('retirementLifePlan');
+            window.location.reload();
         }
     </script>
 </body>
